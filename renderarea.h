@@ -34,9 +34,7 @@ public:
     void setDriverPaths(const QVector<QVector<pair<double, double> > > &value);
 
 public slots:
-    void setShape(Shape shape);
     void setAntialiased(bool antialiased);
-    void setTransformed(bool transformed);
 
 protected:
     void paintEvent(QPaintEvent *event) override;

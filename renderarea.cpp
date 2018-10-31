@@ -5,9 +5,7 @@
 RenderArea::RenderArea(QWidget *parent)
     : QWidget(parent)
 {
-    shape = Polygon;
     antialiased = true;
-    transformed = false;
     pixmap.load(":/images/qt-logo.png");
 
     orderBrush = QBrush(Qt::green);
@@ -52,21 +50,9 @@ void RenderArea::setDriverPaths(const QVector<QVector<pair<double, double> > > &
     update();
 }
 
-void RenderArea::setShape(Shape shape)
-{
-    this->shape = shape;
-    update();
-}
-
 void RenderArea::setAntialiased(bool antialiased)
 {
     this->antialiased = antialiased;
-    update();
-}
-
-void RenderArea::setTransformed(bool transformed)
-{
-    this->transformed = transformed;
     update();
 }
 

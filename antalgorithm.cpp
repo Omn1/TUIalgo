@@ -39,10 +39,10 @@ double AntAlgorithm::dist(int i, int j)
 void AntAlgorithm::findNearest() {
     for (int i = 0; i < n_drivers; i++)
     {
-        double mi = 1000000;
+        double mi = 1000000000;
         int c = -1;
         for (int j = 0; j < n_cafes; j++)
-            if (dist(driver[i], cafe[j]) < mi)
+            if (c == -1 || dist(driver[i], cafe[j]) < mi)
                 mi = dist(driver[i], cafe[j]), c = j;
         driver[i].cx = cafe[c].x;
         driver[i].cy = cafe[c].y;

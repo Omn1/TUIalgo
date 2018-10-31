@@ -18,7 +18,7 @@ MainWindow::MainWindow()
     generateDriversButton = new QPushButton("Сгенерировать водителей");
     connect(generateDriversButton, &QPushButton::clicked, this, &MainWindow::generateDrivers);
 
-    generateCafesButton = new QPushButton("Сгренерировать рестораны");
+    generateCafesButton = new QPushButton("Сгенерировать рестораны");
     connect(generateCafesButton, &QPushButton::clicked, this, &MainWindow::generateCafes);
 
     ordersSpinBox = new QSpinBox;
