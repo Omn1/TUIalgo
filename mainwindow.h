@@ -6,6 +6,7 @@
 #include <sstream>
 #include <QFuture>
 #include <QFutureWatcher>
+#include "antalgorithm.h"
 
 using std::vector;
 using std::pair;
@@ -50,6 +51,8 @@ private:
     std::stringstream cout;
     QFuture<int> algoResult;
     QFutureWatcher<int> algoWatcher;
+
+    AntAlgorithm *antSolver;
 };
 
 #endif // WINDOW_H

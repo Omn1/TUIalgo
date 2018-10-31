@@ -8,7 +8,9 @@
 
 using std::vector;
 
-namespace AntAlgorithm {
+class AntAlgorithm {
+public:
+    AntAlgorithm();
     struct Way
     {
         double length;
@@ -27,24 +29,33 @@ namespace AntAlgorithm {
         double x, y;
     };
 
-    extern double best_length;
-    extern double Q, V;
-    extern vector<char> used;
-    extern size_t n_vertex, n_drivers, n_cafes;
-    extern vector<vector<int> > ordersForCafe;
-    extern vector<int> t, maxTime, dr;
-    extern vector<Driver> driver;
-    extern vector<Cafe> cafe;
-    extern vector<double> x, y, v, ansTime;
-    extern vector<vector<vector<double> > > pheromones;
-    extern vector<vector<double> > d, distances;
-    extern vector<Way> ant;
-    extern std::stringstream cin;
-    extern vector<vector<int> > driverPaths;
+    double best_length;
+    double Q, V;
+    vector<char> used;
+    size_t n_vertex, n_drivers, n_cafes;
+    vector<vector<int> > ordersForCafe;
+    vector<int> t, maxTime, dr;
+    vector<Driver> driver;
+    vector<Cafe> cafe;
+    vector<double> x, y, v, ansTime;
+    vector<vector<vector<double> > > pheromones;
+    vector<vector<double> > d, distances;
+    vector<Way> ant;
+    std::stringstream cin;
+    vector<vector<int> > driverPaths;
 
-    extern int LIVE;
+    int LIVE;
 
     int solve();
-}
+
+    double dist(Driver a, Cafe b);
+    static double distForDriver(Driver a);
+    static bool cmp(Driver a, Driver b);
+    double dist(int i, int j);
+    void findNearest();
+    void set_d();
+    double probability(int to, int pos);
+    vector<vector<int> > getSolution(int n_drivers);
+};
 
 #endif // ANTALGORITHM_H

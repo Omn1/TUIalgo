@@ -111,10 +111,12 @@ void MainWindow::launchAntAlgorithm()
     }
     cout << "1\n";
 
-    AntAlgorithm::cin.swap(cout);
+    antSolver = new AntAlgorithm;
+    antSolver->LIVE = 10000;
+    antSolver->cin.swap(cout);
     disconnect(this, SLOT(antAlgoFinished()));
     connect(&algoWatcher, &QFutureWatcher<int>::finished, this, &MainWindow::antAlgoFinished);
-    algoResult = QtConcurrent::run( AntAlgorithm::solve );
+    algoResult = QtConcurrent::run(antSolver, &AntAlgorithm::solve);
     algoWatcher.setFuture(algoResult);
 }
 
@@ -124,9 +126,9 @@ void MainWindow::antAlgoFinished()
     for (int i = 0; i < drivers.size(); i++) {
         driverPaths.append(QVector< pair<double,double> >());
         driverPaths[i].append(drivers[i]);
-        driverPaths[i].append(cafes[AntAlgorithm::driver[i].id]);
-        for(size_t j = 0; j < AntAlgorithm::driverPaths[i].size(); j++) {
-            int order_num = AntAlgorithm::driverPaths[i][j];
+        driverPaths[i].append(cafes[antSolver->driver[i].id]);
+        for(size_t j = 0; j < antSolver->driverPaths[i].size(); j++) {
+            int order_num = antSolver->driverPaths[i][j];
             pair<double,double> order_coords = orders[order_num];
             driverPaths[i].append(order_coords);
         }

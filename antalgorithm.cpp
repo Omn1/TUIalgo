@@ -16,48 +16,27 @@ using std::random_shuffle;
 using std::max;
 using std::min;
 
-int AntAlgorithm::LIVE = 10000;
-
-double AntAlgorithm::best_length;
-std::stringstream AntAlgorithm::cin;
-
-double AntAlgorithm::Q, AntAlgorithm::V;
-vector<char> AntAlgorithm::used;
-size_t AntAlgorithm::n_vertex, AntAlgorithm::n_drivers, AntAlgorithm::n_cafes;
-vector<vector<int> > AntAlgorithm::ordersForCafe;
-vector<int> AntAlgorithm::t, AntAlgorithm::maxTime, AntAlgorithm::dr;
-vector<AntAlgorithm::Driver> AntAlgorithm::driver;
-vector<AntAlgorithm::Cafe> AntAlgorithm::cafe;
-vector<double> AntAlgorithm::x, AntAlgorithm::y, AntAlgorithm::v, AntAlgorithm::ansTime;
-vector<vector<vector<double> > > AntAlgorithm::pheromones;
-vector<vector<double> > AntAlgorithm::d, AntAlgorithm::distances;
-vector<AntAlgorithm::Way> AntAlgorithm::ant;
-
-vector<vector<int> > AntAlgorithm::driverPaths;
-
-using namespace AntAlgorithm;
-
-double dist(Driver A, Cafe B)
+double AntAlgorithm::dist(Driver A, Cafe B)
 {
     return sqrt((A.x - B.x) * (A.x - B.x) + (A.y - B.y) * (A.y + B.y));
 }
 
-double distForDriver(Driver a) {
+double AntAlgorithm::distForDriver(Driver a) {
     return a.s + sqrt((a.x - a.cx) * (a.x - a.cx) + (a.y - a.cy) * (a.y - a.cy));
 }
 
-bool cmp(Driver a, Driver b)
+bool AntAlgorithm::cmp(Driver a, Driver b)
 {
     int xa = distForDriver(a), xb = distForDriver(b);
     return xa < xb;
 }
 
-double dist(int i, int j)
+double AntAlgorithm::dist(int i, int j)
 {
     return sqrt((x[i] - x[j]) * (x[i] - x[j]) + (y[i] - y[j]) * (y[i] - y[j]));
 }
 
-void findNearest() {
+void AntAlgorithm::findNearest() {
     for (int i = 0; i < n_drivers; i++)
     {
         double mi = 1000000;
@@ -72,7 +51,7 @@ void findNearest() {
 }
 
 
-void set_d()
+void AntAlgorithm::set_d()
 {
     d.resize(n_vertex+n_cafes, vector<double>(n_vertex+n_cafes));
     for (int i = 0; i < n_vertex+n_cafes; i++)
@@ -93,14 +72,14 @@ void set_d()
             }
 }
 
-double probability(int to, int pos) {
+double AntAlgorithm::probability(int to, int pos) {
     if (used[to] || ant[pos].tabu[to])
         return 0;
     int from = ant[pos].last;
     return pow(pheromones[pos][from][to], ALPHA) * pow(distances[from][to], BETA);
 }
 
-vector<vector<int> > getSolution(int n_drivers)
+vector<vector<int> > AntAlgorithm::getSolution(int n_drivers)
 {
     findNearest();
     sort(driver.begin(), driver.end(), cmp);
@@ -207,6 +186,11 @@ vector<vector<int> > getSolution(int n_drivers)
 }
 
 
+
+AntAlgorithm::AntAlgorithm()
+{
+
+}
 
 int AntAlgorithm::solve()
 {
