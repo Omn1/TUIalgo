@@ -310,7 +310,7 @@ void MainWindow::updateStats()
         driver_distances.push_back(cur_dist);
     }
     if (orders.size() > 0) sum_order_time /= orders.size();
-    distanceLabel->setText("Растояние: " + QString::number(distance));
+    distanceLabel->setText("Растояние (пкс): " + QString::number(distance));
     avgTimeLabel->setText("Среднее время ожидания: " + QString::number(sum_order_time));
 }
 
