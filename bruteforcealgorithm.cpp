@@ -162,7 +162,7 @@ double BruteforceAlgorithm::get_cafe_orders_dist(int cafe, int msk)
 int BruteforceAlgorithm::get_first_order(int cafe, int msk)
 {
     double best = inf;
-    double best_i = -1;
+    int best_i = -1;
     for(int i = 0; i < n_orders; i++) {
         if( (msk>>i)&1 ){
             if(order_dp[i][msk] + dist(cafes[cafe], orders[i]) < best){

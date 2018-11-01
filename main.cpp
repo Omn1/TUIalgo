@@ -7,5 +7,7 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
+    w.setFont(QFont("Sans serif", 12));
+
     return a.exec();
 }

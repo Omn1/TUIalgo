@@ -1,12 +1,14 @@
 #include "dynamicstimeoptimizer.h"
 
 using std::min;
+using std::max;
 
 const double DynamicsTimeOptimizer::inf = 1e9;
 
 DynamicsTimeOptimizer::DynamicsTimeOptimizer()
 {
-
+    driver_speed = 1;
+    avg_cook_time = 0;
 }
 
 int DynamicsTimeOptimizer::solve()
@@ -17,6 +19,11 @@ int DynamicsTimeOptimizer::solve()
     calc_driver_orders_dists();
     calc_dp();
     restore_answers();
+}
+
+double DynamicsTimeOptimizer::real_dist(pair<double, double> a, pair<double, double> b)
+{
+    return sqrt((a.first - b.first)*(a.first - b.first) + (a.second - b.second) * (a.second - b.second));
 }
 
 void DynamicsTimeOptimizer::calc_dp()
@@ -87,7 +94,7 @@ void DynamicsTimeOptimizer::calc_driver_orders_dists()
     for(int msk = 0; msk < mxmask; msk++) {
         for(int i = 0; i < n_cafes; i++) {
             for(int j = 0; j < n_drivers; j++) {
-                double new_dist = get_cafe_orders_dist(i,msk) + mask_bits[msk] * dist(drivers[j], cafes[i]);
+                double new_dist = get_cafe_orders_dist(i,msk) + mask_bits[msk] * max(dist(drivers[j], cafes[i]), avg_cook_time);
                 if (new_dist < driver_orders_dist[j][msk]) {
                     driver_orders_dist[j][msk] = new_dist;
                     driver_orders_cafe[j][msk] = i;
@@ -126,7 +133,7 @@ void DynamicsTimeOptimizer::restore_driver(int driver)
 
 double DynamicsTimeOptimizer::dist(pair<double, double> a, pair<double, double> b)
 {
-    return sqrt((a.first - b.first)*(a.first - b.first) + (a.second - b.second) * (a.second - b.second));
+    return real_dist(a,b) / driver_speed;
 }
 
 void DynamicsTimeOptimizer::init_vars()
@@ -165,7 +172,7 @@ double DynamicsTimeOptimizer::get_cafe_orders_dist(int cafe, int msk)
 int DynamicsTimeOptimizer::get_first_order(int cafe, int msk)
 {
     double best = inf;
-    double best_i = -1;
+    int best_i = -1;
     for(int i = 0; i < n_orders; i++) {
         if( (msk>>i)&1 ){
             if(order_dp[i][msk] + mask_bits[msk] * dist(cafes[cafe], orders[i]) < best){

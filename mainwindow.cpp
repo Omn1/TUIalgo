@@ -37,6 +37,14 @@ MainWindow::MainWindow()
     antSpinBox->setMinimum(1);
     antSpinBox->setMaximum(100000);
 
+    speedSpinBox = new QSpinBox;
+    speedSpinBox->setMinimum(1);
+    speedSpinBox->setMaximum(10000);
+
+    cookTimeBox = new QSpinBox;
+    cookTimeBox->setMinimum(0);
+    cookTimeBox->setMaximum(10000);
+
     connect(ordersSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onAlgoParametersChanged);
     connect(driversSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onAlgoParametersChanged);
     connect(cafesSpinBox, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::onAlgoParametersChanged);
@@ -51,10 +59,10 @@ MainWindow::MainWindow()
     DTOAlgoButton = new QPushButton("Динамика по подмножествам (время)");
     connect(DTOAlgoButton, &QPushButton::clicked, this, &MainWindow::launchDTOAlgorithm);
 
-    distanceLabel = new QLabel("Расстояние:");
-    avgTimeLabel = new QLabel("Среднее время ожидания:");
+    distanceLabel = new QLabel("Расстояние (пкс): 0");
+    avgTimeLabel = new QLabel("Среднее время ожидания: 0");
 
-    timeButton = new QPushButton("Получить статистику");
+    timeButton = new QPushButton("Получить статистику времени ожидания");
     connect(timeButton, &QPushButton::clicked, [this]{
         QChartView *cv = new QChartView(makeWaitingTimeChart());
         cv->setRenderHint(QPainter::Antialiasing);
@@ -62,7 +70,7 @@ MainWindow::MainWindow()
         cv->show();
     });
 
-    distanceButton = new QPushButton("Получить статистику");
+    distanceButton = new QPushButton("Получить статистику расстояний");
     connect(distanceButton, &QPushButton::clicked, [this]{
         QChartView *cv = new QChartView(makeDriverDistsChart());
         cv->setRenderHint(QPainter::Antialiasing);
@@ -71,8 +79,7 @@ MainWindow::MainWindow()
     });
 
     QGridLayout *mainLayout = new QGridLayout;
-    mainLayout->setColumnStretch(0, 1);
-    mainLayout->setColumnStretch(2, 1);
+    mainLayout->setColumnStretch(3, 1);
     mainLayout->addWidget(renderArea, 0, 0, 1, 4);
     mainLayout->addWidget(generateOrdersButton, 1, 0);
     mainLayout->addWidget(generateDriversButton, 1, 1);
@@ -87,9 +94,16 @@ MainWindow::MainWindow()
     mainLayout->addWidget(avgTimeLabel, 4, 2);
     mainLayout->addWidget(distanceButton, 3, 3);
     mainLayout->addWidget(timeButton, 4, 3);
-    mainLayout->addWidget(new QLabel("Параметры алгоритмов:"), 6, 0, 1, 4);
+    QLabel *paramLabel = new QLabel("Параметры алгоритмов:");
+    paramLabel->setAlignment(Qt::AlignCenter);
+    paramLabel->setMaximumHeight(30);
+    mainLayout->addWidget(paramLabel, 6, 0, 1, 4);
     mainLayout->addWidget(new QLabel("Жизнь муравьиной колонии:"), 7, 0);
     mainLayout->addWidget(antSpinBox, 7, 1);
+    mainLayout->addWidget(new QLabel("Средняя скорость водителя (пкс/сек):"), 8, 0);
+    mainLayout->addWidget(speedSpinBox, 8, 1);
+    mainLayout->addWidget(new QLabel("Среднее время приготовления заказа (сек):"), 9, 0);
+    mainLayout->addWidget(cookTimeBox, 9, 1);
     setLayout(mainLayout);
 
     generateOrders();
@@ -114,12 +128,13 @@ void MainWindow::generateOrders()
     driverPaths.clear();
     renderArea->setDriverPaths(driverPaths);
     orders.clear();
-    double maxX = renderArea->width() - 10;
-    double maxY = renderArea->height() - 10;
+    double maxX = renderArea->width() - 20;
+    double maxY = renderArea->height() - 20;
     for (int i = 0; i < ordersSpinBox->value(); i++) {
-        orders.append({randomDouble(10,maxX), randomDouble(10,maxY)});
+        orders.append({randomDouble(20,maxX), randomDouble(20,maxY)});
     }
     renderArea->setOrders(orders);
+    onAlgoParametersChanged();
 }
 
 void MainWindow::generateDrivers()
@@ -127,12 +142,13 @@ void MainWindow::generateDrivers()
     driverPaths.clear();
     renderArea->setDriverPaths(driverPaths);
     drivers.clear();
-    double maxX = renderArea->width() - 10;
-    double maxY = renderArea->height() - 10;
+    double maxX = renderArea->width() - 20;
+    double maxY = renderArea->height() - 20;
     for (int i = 0; i < driversSpinBox->value(); i++) {
-        drivers.append({randomDouble(10,maxX), randomDouble(10,maxY)});
+        drivers.append({randomDouble(20,maxX), randomDouble(20,maxY)});
     }
     renderArea->setDrivers(drivers);
+    onAlgoParametersChanged();
 }
 
 void MainWindow::generateCafes()
@@ -140,23 +156,24 @@ void MainWindow::generateCafes()
     driverPaths.clear();
     renderArea->setDriverPaths(driverPaths);
     cafes.clear();
-    double maxX = renderArea->width() - 10;
-    double maxY = renderArea->height() - 10;
+    double maxX = renderArea->width() - 20;
+    double maxY = renderArea->height() - 20;
     for (int i = 0; i < cafesSpinBox->value(); i++) {
-        cafes.append({randomDouble(10,maxX), randomDouble(10,maxY)});
+        cafes.append({randomDouble(20,maxX), randomDouble(20,maxY)});
     }
     renderArea->setCafes(cafes);
+    onAlgoParametersChanged();
 }
 
 void MainWindow::launchAntAlgorithm()
 {
     driverPaths.clear();
     renderArea->setDriverPaths(driverPaths);
-    antAlgoButton->setEnabled(false);
+    lockInterface();
     cout.clear();
     cout << orders.size() << "\n";
     for (int i = 0; i < orders.size(); i++) {
-        cout << orders[i].first << " " << orders[i].second << " 0\n";
+        cout << orders[i].first << " " << orders[i].second << " " << cookTimeBox->value() << "\n";
     }
     cout << drivers.size() << "\n";
     for (int i = 0; i < drivers.size(); i++) {
@@ -166,7 +183,7 @@ void MainWindow::launchAntAlgorithm()
     for (int i = 0; i < cafes.size(); i++) {
         cout << cafes[i].first << " " << cafes[i].second << "\n";
     }
-    cout << "1\n";
+    cout << speedSpinBox->value() << " \n";
 
     antSolver = new AntAlgorithm;
     antSolver->LIVE = antSpinBox->value();
@@ -192,7 +209,7 @@ void MainWindow::antAlgoFinished()
         }
     }
     renderArea->setDriverPaths(driverPaths);
-    antAlgoButton->setEnabled(true);
+    unlockInterface();
     updateStats();
 }
 
@@ -200,7 +217,7 @@ void MainWindow::launchBruteforceAlgorithm()
 {
     driverPaths.clear();
     renderArea->setDriverPaths(driverPaths);
-    bruteforceAlgoButton->setEnabled(false);
+    lockInterface();
 
     bruteforceSolver = new BruteforceAlgorithm;
 
@@ -229,7 +246,7 @@ void MainWindow::bruteforceAlgoFinished()
         }
     }
     renderArea->setDriverPaths(driverPaths);
-    bruteforceAlgoButton->setEnabled(true);
+    unlockInterface();
     updateStats();
 }
 
@@ -237,13 +254,16 @@ void MainWindow::launchDTOAlgorithm()
 {
     driverPaths.clear();
     renderArea->setDriverPaths(driverPaths);
-    DTOAlgoButton->setEnabled(false);
+    lockInterface();
 
     DTOSolver = new DynamicsTimeOptimizer;
 
     DTOSolver->orders = orders;
     DTOSolver->drivers = drivers;
     DTOSolver->cafes = cafes;
+
+    DTOSolver->avg_cook_time = cookTimeBox->value();
+    DTOSolver->driver_speed = speedSpinBox->value();
 
     disconnect(this, SLOT(DTOAlgoFinished()));
     connect(&algoWatcher, &QFutureWatcher<int>::finished, this, &MainWindow::DTOAlgoFinished);
@@ -266,40 +286,69 @@ void MainWindow::DTOAlgoFinished()
         }
     }
     renderArea->setDriverPaths(driverPaths);
-    DTOAlgoButton->setEnabled(true);
+    unlockInterface();
     updateStats();
 }
 
 void MainWindow::updateStats()
 {
     double distance = 0;
-    double sum_order_distance = 0;
+    double sum_order_time = 0;
     order_waiting_times.clear();
     driver_distances.clear();
     for (int i = 0; i < drivers.size(); i++){
         double cur_dist = 0;
+        double time_for_cooking = cookTimeBox->value() * (driverPaths[i].size() - 2);
         for(int j = 0; j + 1 < driverPaths[i].size(); j++){
-            distance += DynamicsTimeOptimizer::dist(driverPaths[i][j], driverPaths[i][j+1]);
-            cur_dist += DynamicsTimeOptimizer::dist(driverPaths[i][j], driverPaths[i][j+1]);
+            distance += DynamicsTimeOptimizer::real_dist(driverPaths[i][j], driverPaths[i][j+1]);
+            cur_dist += DynamicsTimeOptimizer::real_dist(driverPaths[i][j], driverPaths[i][j+1]);
             if (j > 0) {
-                sum_order_distance += cur_dist;
-                order_waiting_times.push_back(cur_dist);
+                sum_order_time += cur_dist / speedSpinBox->value() + time_for_cooking;
+                order_waiting_times.push_back(cur_dist / speedSpinBox->value() + time_for_cooking);
             }
         }
         driver_distances.push_back(cur_dist);
     }
-    if (orders.size() > 0) sum_order_distance /= orders.size();
+    if (orders.size() > 0) sum_order_time /= orders.size();
     distanceLabel->setText("Растояние: " + QString::number(distance));
-    avgTimeLabel->setText("Среднее время ожидания: " + QString::number(sum_order_distance));
+    avgTimeLabel->setText("Среднее время ожидания: " + QString::number(sum_order_time));
 }
 
 void MainWindow::onAlgoParametersChanged()
 {
-    int n_orders = ordersSpinBox->value();
+    int n_orders = orders.size();
+    int n_drivers = drivers.size();
     int ant_live = antSpinBox->value();
-    bruteforceAlgoButton->setEnabled(n_orders <= 20);
-    DTOAlgoButton->setEnabled(n_orders <= 20);
+    bruteforceAlgoButton->setEnabled(n_drivers * pow(3,n_orders) <= 1e11);
+    DTOAlgoButton->setEnabled(n_drivers * pow(3,n_orders) <= 1e11);
     antAlgoButton->setEnabled( n_orders * ant_live <= 3000000);
+}
+
+void MainWindow::lockInterface()
+{
+    antAlgoButton->setEnabled(false);
+    bruteforceAlgoButton->setEnabled(false);
+    DTOAlgoButton->setEnabled(false);
+    generateCafesButton->setEnabled(false);
+    generateDriversButton->setEnabled(false);
+    generateOrdersButton->setEnabled(false);
+    antSpinBox->setEnabled(false);
+    speedSpinBox->setEnabled(false);
+    cookTimeBox->setEnabled(false);
+}
+
+void MainWindow::unlockInterface()
+{
+    antAlgoButton->setEnabled(true);
+    bruteforceAlgoButton->setEnabled(true);
+    DTOAlgoButton->setEnabled(true);
+    generateCafesButton->setEnabled(true);
+    generateDriversButton->setEnabled(true);
+    generateOrdersButton->setEnabled(true);
+    antSpinBox->setEnabled(true);
+    speedSpinBox->setEnabled(true);
+    cookTimeBox->setEnabled(true);
+    onAlgoParametersChanged();
 }
 
 QChart *MainWindow::makeWaitingTimeChart()

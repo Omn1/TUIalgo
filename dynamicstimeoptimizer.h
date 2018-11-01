@@ -33,9 +33,14 @@ public:
 
     QVector<QVector<int> > driversPath;
 
-    static double dist(pair<double,double> a, pair<double,double> b);
+    static double real_dist(pair<double,double> a, pair<double,double> b);
 
+    double dist(pair<double,double> a, pair<double,double> b);
     static const double inf;
+
+    double driver_speed;
+
+    double avg_cook_time;
 
 private:
     void init_vars();

@@ -64,10 +64,10 @@ void RenderArea::paintEvent(QPaintEvent * /* event */)
         painter.setRenderHint(QPainter::Antialiasing, true);
 
     painter.setPen(objectPen);
+    drawDriverPaths(painter);
     drawOrders(painter);
     drawDrivers(painter);
     drawCafes(painter);
-    drawDriverPaths(painter);
 
     painter.setRenderHint(QPainter::Antialiasing, false);
     painter.setPen(palette().dark().color());
@@ -84,7 +84,7 @@ void RenderArea::drawOrders(QPainter &painter)
         painter.save();
         painter.translate(x, y);
 
-        painter.drawEllipse(QRect(-5,-5,10,10));
+        painter.drawEllipse(QRect(-15,-15,30,30));
         painter.restore();
     }
 }
@@ -98,7 +98,7 @@ void RenderArea::drawDrivers(QPainter &painter)
         painter.save();
         painter.translate(x, y);
 
-        painter.drawEllipse(QRect(-5,-5,10,10));
+        painter.drawEllipse(QRect(-15,-15,30,30));
         painter.restore();
     }
 }
@@ -112,19 +112,27 @@ void RenderArea::drawCafes(QPainter &painter)
         painter.save();
         painter.translate(x, y);
 
-        painter.drawEllipse(QRect(-5,-5,10,10));
+        painter.drawEllipse(QRect(-15,-15,30,30));
         painter.restore();
     }
+}
+
+int rand_int(int min, int max) {
+    return min + rand() % (max - min + 1);
 }
 
 void RenderArea::drawDriverPaths(QPainter &painter)
 {
     for (int i = 0; i < driverPaths.size(); i++) {
+        QColor cur_color(rand_int(0,255),rand_int(0,255),rand_int(0,255));
+        painter.save();
+        painter.setPen(QPen(QBrush(cur_color),4));
         for (int j = 0; j + 1 < driverPaths[i].size(); j++) {
             painter.drawLine(static_cast<int>(driverPaths[i][j].first),
                              static_cast<int>(driverPaths[i][j].second),
                              static_cast<int>(driverPaths[i][j+1].first),
                              static_cast<int>(driverPaths[i][j+1].second));
         }
+        painter.restore();
     }
 }

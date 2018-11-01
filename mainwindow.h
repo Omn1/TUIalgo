@@ -53,6 +53,9 @@ private slots:
 
     void onAlgoParametersChanged();
 
+    void lockInterface();
+    void unlockInterface();
+
 private:
 
     QChart *makeWaitingTimeChart();
@@ -76,6 +79,8 @@ private:
     QSpinBox *cafesSpinBox;
 
     QSpinBox *antSpinBox;
+    QSpinBox *speedSpinBox;
+    QSpinBox *cookTimeBox;
 
     QVector< pair<double,double> > orders;
     QVector< pair<double,double> > drivers;
