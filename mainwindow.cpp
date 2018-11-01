@@ -35,7 +35,7 @@ MainWindow::MainWindow()
 
     antSpinBox = new QSpinBox;
     antSpinBox->setMinimum(1);
-    antSpinBox->setMaximum(100000);
+    antSpinBox->setMaximum(10000000);
 
     speedSpinBox = new QSpinBox;
     speedSpinBox->setMinimum(1);
@@ -321,7 +321,6 @@ void MainWindow::onAlgoParametersChanged()
     int ant_live = antSpinBox->value();
     bruteforceAlgoButton->setEnabled(n_drivers * pow(3,n_orders) <= 1e11);
     DTOAlgoButton->setEnabled(n_drivers * pow(3,n_orders) <= 1e11);
-    antAlgoButton->setEnabled( n_orders * ant_live <= 3000000);
 }
 
 void MainWindow::lockInterface()
