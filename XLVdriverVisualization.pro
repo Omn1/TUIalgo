@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets concurrent
+QT       += core gui widgets concurrent charts
 
 TARGET = XLVdriverVisualization
 TEMPLATE = app
@@ -26,12 +26,16 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     renderarea.cpp \
-    antalgorithm.cpp
+    antalgorithm.cpp \
+    bruteforcealgorithm.cpp \
+    dynamicstimeoptimizer.cpp
 
 HEADERS += \
         mainwindow.h \
     renderarea.h \
-    antalgorithm.h
+    antalgorithm.h \
+    bruteforcealgorithm.h \
+    dynamicstimeoptimizer.h
 
 FORMS +=
 
